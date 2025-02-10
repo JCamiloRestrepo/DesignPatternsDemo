@@ -1,5 +1,5 @@
 ﻿using Xunit;
-using DesignPatternsApp.CreationalPatterns;
+using DesignPatternsApp.CreationalPatterns.Singleton;
 
 namespace DesignPatternsTests.Tests
 {

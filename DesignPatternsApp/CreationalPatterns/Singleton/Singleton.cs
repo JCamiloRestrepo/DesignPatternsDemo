@@ -1,4 +1,4 @@
-﻿namespace DesignPatternsApp.CreationalPatterns
+﻿namespace DesignPatternsApp.CreationalPatterns.Singleton
 {
     public sealed class Singleton
     {
