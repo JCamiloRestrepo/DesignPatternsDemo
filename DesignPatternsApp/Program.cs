@@ -1,5 +1,8 @@
 ﻿using DesignPatternsApp.CreationalPatterns.Singleton;
 using DesignPatternsApp.CreationalPatterns.Factory.Factories;
+using DesignPatternsApp.BehavioralPatterns.Strategy.Context;
+using DesignPatternsApp.BehavioralPatterns.Strategy.Implementations;
+using DesignPatternsApp.BehavioralPatterns.Strategy.Interfaces;
 
 class Program
 {
@@ -11,6 +14,7 @@ class Program
             Console.WriteLine("Seleccione un patrón de diseño para probar:");
             Console.WriteLine("1 - Singleton");
             Console.WriteLine("2 - Factory");
+            Console.WriteLine("3 - Strategy");
             Console.WriteLine("0 - Salir");
             Console.Write("Opción: ");
 
@@ -23,6 +27,9 @@ class Program
                     break;
                 case "2":
                     TestFactory();
+                    break;
+                case "3":
+                    TestStrategy();
                     break;
                 case "0":
                     return;
@@ -63,5 +70,31 @@ class Program
         {
             Console.WriteLine($"❌ Error: {ex.Message}");
         }
+    }
+
+    static void TestStrategy()
+    {
+        Console.WriteLine("\n🔹 Probando Strategy:");
+        Console.Write("Ingrese el precio total: ");
+        if (!decimal.TryParse(Console.ReadLine(), out decimal totalPrice))
+        {
+            Console.WriteLine("❌ Error: Entrada inválida.");
+            return;
+        }
+
+        Console.Write("Seleccione el tipo de descuento (none, percentage, fixed): ");
+        string? discountType = Console.ReadLine();
+
+        IDiscountStrategy discountStrategy = discountType?.ToLower() switch
+        {
+            "percentage" => new PercentageDiscount(10), // 10% de descuento
+            "fixed" => new FixedAmountDiscount(5), // Descuento fijo de $5
+            _ => new NoDiscount()
+        };
+
+        var calculator = new PriceCalculator(discountStrategy);
+        decimal finalPrice = calculator.CalculateFinalPrice(totalPrice);
+
+        Console.WriteLine($"💰 Precio final después del descuento: {finalPrice:C}");
     }
 }

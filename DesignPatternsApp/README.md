@@ -75,3 +75,70 @@ catch (Exception ex)
 {
     Console.WriteLine($"❌ Error: {ex.Message}");
 }
+
+# Strategy Pattern
+
+## Description
+The Strategy pattern defines a family of algorithms, encapsulates each one, and makes them interchangeable. 
+This allows selecting an algorithm at runtime instead of implementing multiple conditional statements.
+
+## Implementation
+- An interface that defines a common behavior for different strategies.
+- Concrete strategy classes that implement the interface.
+- A context class that utilizes a strategy instance to perform operations.
+
+## Example Code (C#)
+// Strategy interface
+public interface IDiscountStrategy
+{
+    decimal ApplyDiscount(decimal price);
+}
+
+// Concrete strategies
+public class NoDiscount : IDiscountStrategy
+{
+    public decimal ApplyDiscount(decimal price) => price;
+}
+
+public class PercentageDiscount : IDiscountStrategy
+{
+    private readonly decimal _percentage;
+    public PercentageDiscount(decimal percentage) => _percentage = percentage;
+    public decimal ApplyDiscount(decimal price) => price - (price * _percentage / 100);
+}
+
+public class FixedAmountDiscount : IDiscountStrategy
+{
+    private readonly decimal _amount;
+    public FixedAmountDiscount(decimal amount) => _amount = amount;
+    public decimal ApplyDiscount(decimal price) => price - _amount;
+}
+
+// Context class
+public class PriceCalculator
+{
+    private readonly IDiscountStrategy _discountStrategy;
+    public PriceCalculator(IDiscountStrategy discountStrategy) => _discountStrategy = discountStrategy;
+    public decimal CalculateFinalPrice(decimal price) => _discountStrategy.ApplyDiscount(price);
+}
+
+// Usage
+Console.Write("Enter total price: ");
+if (decimal.TryParse(Console.ReadLine(), out decimal totalPrice))
+{
+    Console.Write("Select discount type (none, percentage, fixed): ");
+    string? discountType = Console.ReadLine();
+    IDiscountStrategy discountStrategy = discountType?.ToLower() switch
+    {
+        "percentage" => new PercentageDiscount(10), // 10% discount
+        "fixed" => new FixedAmountDiscount(5), // Fixed $5 discount
+        _ => new NoDiscount()
+    };
+    var calculator = new PriceCalculator(discountStrategy);
+    decimal finalPrice = calculator.CalculateFinalPrice(totalPrice);
+    Console.WriteLine($"💰 Final price after discount: {finalPrice:C}");
+}
+else
+{
+    Console.WriteLine("❌ Invalid input.");
+}
